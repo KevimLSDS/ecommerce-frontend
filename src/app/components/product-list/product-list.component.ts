@@ -12,6 +12,7 @@ export class ProductListComponent implements OnInit {
   products: Product[] = [];
   currentCategoryId: number = 1;
   previousCategoryId: number = 1;
+  previousKeyword: string = '';
   currentCategoryName: string = '';
   searchMode: boolean = false;
 
@@ -75,12 +76,7 @@ export class ProductListComponent implements OnInit {
         this.currentCategoryId
       )
       .subscribe({
-        next: (data) => {
-          this.products = data._embedded.products;
-          this.thePageNumber = data.page.number + 1;
-          this.thePageSize = data.page.size;
-          this.theTotalElements = data.page.totalElements;
-        },
+        next: this.processResult(),
         error: (e: string) => console.log(e),
       });
   }
@@ -88,19 +84,38 @@ export class ProductListComponent implements OnInit {
   handleSearchProducts(): void {
     const theKeyword: string = this.route.snapshot.paramMap.get('keyword')!;
 
-    this.productService.searchProducts(theKeyword).subscribe({
-      next: (data: Product[]) => {
-        this.products = data;
-      },
-      error: (e: string) => {
-        console.log(e);
-      },
-    });
+    // If we have a different keyword than previous, then set thePageNumber to 1
+    if (this.previousKeyword != theKeyword) {
+      this.thePageNumber = 1;
+    }
+
+    this.previousKeyword = theKeyword;
+    console.log(`keyword=${theKeyword}, thePageNumber=${this.thePageNumber}`);
+
+    this.productService
+      .searchProductsPaginate(
+        this.thePageNumber - 1,
+        this.thePageSize,
+        theKeyword
+      )
+      .subscribe({
+        next: this.processResult(),
+        error: (e: string) => console.log(e),
+      });
   }
 
   updatePageSize(pageSize: string): void {
     this.thePageSize = +pageSize;
     this.thePageNumber = 1;
     this.listProducts();
+  }
+
+  processResult() {
+    return (data: any) => {
+      this.products = data._embedded.products;
+      this.thePageNumber = data.page.number + 1;
+      this.thePageSize = data.page.size;
+      this.theTotalElements = data.page.totalElements;
+    };
   }
 }
