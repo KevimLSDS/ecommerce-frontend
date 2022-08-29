@@ -13,20 +13,16 @@ export class CartService {
 
   constructor() {}
 
-  addToCart(cartItem: CartItem) {
+  addToCart(theCartItem: CartItem) {
     // Check if we already have the item in our cart
     let alreadyExistsInCart: boolean = false;
     let existingCartItem!: CartItem;
 
     if (this.cartItems.length > 0) {
       // Find the item in the cart based on the id
-
-      for (let tempCartItem of this.cartItems) {
-        if (tempCartItem.id == cartItem.id) {
-          existingCartItem = tempCartItem;
-          break;
-        }
-      }
+      existingCartItem = this.cartItems.find(
+        (item) => item.id === theCartItem.id
+      )!;
     }
 
     // Check if we found it
@@ -35,7 +31,7 @@ export class CartService {
     if (alreadyExistsInCart) {
       existingCartItem.quantity++;
     } else {
-      this.cartItems.push(cartItem);
+      this.cartItems.push(theCartItem);
     }
 
     // Compute cart total price and total quantity

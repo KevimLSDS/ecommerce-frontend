@@ -7,7 +7,9 @@
     <div class="price">
       {{ product.unitPrice | currency: "BRL" }}
     </div>
-    <a href="#" class="btn primary-btn">Add to cart</a>
+    <button (click)="addToCart()" class="btn btn-primary btn-sm">
+      Add to cart
+    </button>
 
     <hr />
     <h4>Description</h4>
