@@ -1,4 +1,4 @@
-import { CartService } from './../../services/cart.service';
+import { FormService } from './../../services/form.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
@@ -13,9 +13,12 @@ export class CheckoutComponent implements OnInit {
   totalPrice: number = 0;
   totalQuantity: number = 0;
 
+  creditCardYears: number[] = [];
+  creditCardMonths: number[] = [];
+
   constructor(
     private formBuilder: FormBuilder,
-    private cartService: CartService
+    private formService: FormService
   ) {}
 
   ngOnInit(): void {
@@ -48,6 +51,21 @@ export class CheckoutComponent implements OnInit {
         expirationYear: [''],
       }),
     });
+
+    // Get months for credit card expiration date
+    const startMonth: number = new Date().getMonth() + 1;
+    console.log(`startMonth: ${startMonth}`);
+
+    this.formService.getCCMonth(startMonth).subscribe({
+      next: (data: number[]) => (this.creditCardMonths = data),
+      error: (e: string) => console.log(e),
+    });
+
+    // Get years for credit card expiration date
+    this.formService.getCCYears().subscribe({
+      next: (data: number[]) => (this.creditCardYears = data),
+      error: (e: string) => console.log(e),
+    });
   }
 
   onSubmit(): void {
@@ -63,5 +81,26 @@ export class CheckoutComponent implements OnInit {
     } else {
       this.checkoutFormGroup.controls['billingAddress'].reset();
     }
+  }
+
+  handleMonthsAndYears(): void {
+    const creditCardFormGroup = this.checkoutFormGroup.get('creditCard');
+
+    const currentYear = new Date().getFullYear();
+    const selectedYear = Number(creditCardFormGroup?.value.expirationYear);
+
+    // If the current year qeuals the selected year, then start with the current month
+    let startMonth: number;
+
+    if (currentYear === selectedYear) {
+      startMonth = new Date().getMonth() + 1;
+    } else {
+      startMonth = 1;
+    }
+
+    this.formService.getCCMonth(startMonth).subscribe({
+      next: (data: number[]) => (this.creditCardMonths = data),
+      error: (e: string) => console.log(e),
+    });
   }
 }
