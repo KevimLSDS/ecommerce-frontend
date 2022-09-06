@@ -1,3 +1,4 @@
+import { CartService } from './../../services/cart.service';
 import { FormService } from './../../services/form.service';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -32,10 +33,13 @@ export class CheckoutComponent implements OnInit {
 
     constructor(
         private formBuilder: FormBuilder,
-        private formService: FormService
+        private formService: FormService,
+        private cartService: CartService
     ) {}
 
     ngOnInit(): void {
+        this.reviewCartDetails();
+
         this.checkoutFormGroup = this.formBuilder.group({
             customer: this.formBuilder.group({
                 firstName: new FormControl('', [
@@ -129,6 +133,20 @@ export class CheckoutComponent implements OnInit {
         // Get countries from backend
         this.formService.getCountries().subscribe({
             next: (data: Country[]) => (this.countries = data),
+            error: (e: string) => console.log(e),
+        });
+    }
+
+    reviewCartDetails(): void {
+        // Subscribe to totalQuantity on CartService
+        this.cartService.totalQuantity.subscribe({
+            next: (quantity: number) => (this.totalQuantity = quantity),
+            error: (e: string) => console.log(e),
+        });
+
+        // Subscribe to totalPrice on CartService
+        this.cartService.totalPrice.subscribe({
+            next: (price: number) => (this.totalPrice = price),
             error: (e: string) => console.log(e),
         });
     }
