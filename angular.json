@@ -27,6 +27,14 @@
                         ],
                         "scripts": [
                             "./node_modules/bootstrap/dist/js/bootstrap.js"
+                        ],
+                        "allowedCommonJsDependencies": [
+                            "@babel/runtime-corejs3/regenerator",
+                            "cross-fetch",
+                            "p-cancelable",
+                            "tiny-emitter",
+                            "detect-node",
+                            "@okta/okta-signin-widget"
                         ]
                     },
                     "configurations": {
