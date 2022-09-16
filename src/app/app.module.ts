@@ -25,6 +25,7 @@ import { CheckoutComponent } from './components/checkout/checkout.component';
 import { LoginComponent } from './components/login/login.component';
 import { LoginStatusComponent } from './components/login-status/login-status.component';
 import { MembersPageComponent } from './components/members-page/members-page.component';
+import { OrderHistoryComponent } from './components/order-history/order-history.component';
 
 const oktaConfig = myAppConfig.oidc;
 
@@ -71,6 +72,7 @@ const routes: Routes = [
         LoginComponent,
         LoginStatusComponent,
         MembersPageComponent,
+        OrderHistoryComponent,
     ],
     imports: [
         BrowserModule,
