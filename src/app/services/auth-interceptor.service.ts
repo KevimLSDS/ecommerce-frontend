@@ -8,6 +8,7 @@ import {
 } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { from, lastValueFrom, Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root',
@@ -26,8 +27,10 @@ export class AuthInterceptorService implements HttpInterceptor {
         request: HttpRequest<any>,
         next: HttpHandler
     ): Promise<HttpEvent<any>> {
+        const endpoint = `${environment.apiUrl}/orders`;
+
         // Only add an access token for secured endpoints
-        const securedEnpoints = ['http://localhost:8080/api/orders'];
+        const securedEnpoints = [endpoint];
 
         if (
             securedEnpoints.some((url) => request.urlWithParams.includes(url))
